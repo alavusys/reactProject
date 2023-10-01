@@ -12,42 +12,34 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
   root :{
     width : '100%',
-    marginTop : theme.spacing.unit * 3,
+    marginTop : theme.spacing(3),
     overflowX : "auto"
   },
   table :{
       minWidth : 1080
   }
-})
+});
 
-const customers =[
-  {
-    'id'   : 1,
-    'image': 'https://placeimg.com/64/64/any',
-    'name' : 'yoonseop' ,
-    'sex'  : 'man' ,
-    'age'  : 31,
-    'job'  : "beginer"
-  },
-  {
-    'id'   : 2,
-    'image': 'https://placeimg.com/64/64/any',
-    'name' : 'heesun' ,
-    'sex'  : 'woman' ,
-    'age'  : 31,
-    'job'  : "animator"
-  },
-  {
-    'id'   : 3,
-    'image': 'https://placeimg.com/64/64/any',
-    'name' : 'winter' ,
-    'sex'  : 'woman' ,
-    'age'  : 25,
-    'job'  : "singer"
-  }
-]
-
+// state : componnent 에서 변경될수있음
+// props : "" 에서 변경될수 없음
 class App extends Component{
+
+  state = {
+    customers :""
+  }
+  
+  componentDidMount() {
+    this.callApi()
+    .then(res => this.setState({customers :res}))
+    .catch(err => console.log(err));
+  }
+
+  callApi = async () => {
+    const response  = await fetch('/api/customers');
+    const body      = await response.json();
+    return body;
+  }
+
   render() {
     const { classes } = this.props;
     return(
@@ -66,7 +58,9 @@ class App extends Component{
           </TableHead>
 
           <TableBody>
-          {customers.map( c=> { return( <Customer key ={c.id} id={c.id} image={c.image} name={c.name} sex={c.sex} job={c.job} age={c.age} /> ) })}
+          {this.state.customers ? this.state.customers.map( c=> {
+             return( <Customer key ={c.id} id={c.id} image={c.image} name={c.name} sex={c.sex} job={c.job} age={c.age} /> ) 
+            }) : ""}
           </TableBody>
         </Table>
         </Paper>
